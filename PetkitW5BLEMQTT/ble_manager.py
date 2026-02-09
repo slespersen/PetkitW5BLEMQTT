@@ -69,11 +69,30 @@ class BLEManager:
 
     async def write_characteristic(self, address, characteristic_uuid, data):
         if address in self.connected_devices:
-            self.logger.info(f"Writing to characteristic {characteristic_uuid} on {address}")
             client = self.connected_devices[address]
-            await client.write_gatt_char(characteristic_uuid, data)
-            self.logger.info(f"Write complete")
-            return True
+        
+            try:
+                self.logger.info(f"Writing to characteristic {characteristic_uuid} on {address}")
+        
+                await asyncio.wait_for(
+                    client.write_gatt_char(characteristic_uuid, data),
+                    timeout=5.0
+                )
+        
+                self.logger.info("Write complete")
+                return True
+        
+            except asyncio.TimeoutError:
+                self.logger.error(f"Write timeout on {address}, reconnecting...")
+                await self.disconnect_device(address)
+                await asyncio.sleep(1)
+                await self.connect_device(address)
+                return False
+        
+            except Exception as e:
+                self.logger.error(f"Write failed: {e}")
+                return False
+
         else:
             self.logger.error(f"Device {address} not connected")
             return False

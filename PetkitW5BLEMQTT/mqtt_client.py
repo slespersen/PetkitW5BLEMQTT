@@ -4,7 +4,14 @@ import asyncio
 
 class MQTTClient:
     def __init__(self, logger, client_id, broker, port, username=None, password=None, keepalive=60):
-        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, client_id)
+    
+        try:
+            self.client = mqtt.Client(
+                client_id=client_id,
+                callback_api_version=mqtt.CallbackAPIVersion.VERSION1
+            )
+        except AttributeError:
+            self.client = mqtt.Client(client_id=client_id)
 
         if username and password:
             self.client.username_pw_set(username, password)

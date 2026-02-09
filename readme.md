@@ -24,6 +24,7 @@ ln -s $(pwd)/PetkitW5BLEMQTT /path/to/your/python/site-packages/PetkitW5BLEMQTT
 ```
 
 ### Usage
+`supervisor.py` is provided for spawning multiple instances of main.py, in order to handle multiple fountains. Please note that only --mqtt and any mqtt related argument should be passed. The supervisor will find all available instances.
 
 `main.py` is provided for running the library. Below are the arguments it accepts:
 
