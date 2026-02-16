@@ -234,41 +234,46 @@ class Utils:
         return purified_water_text
 
     # canculateWxEnergyForType
-    # device.alias, device.type_code, 
     @staticmethod
     def calculate_energy_usage(alias, pump_runtime_today):
-        f = 0
-        f2 = 2.0
-        f3 = 1.5
+        """
+        Electricity consumption in kWh.
+        Equivalent to Java: i != 1 branch.
+        """
+        # W5C uses a different power coefficient
+        power_coefficient = 0.182 if alias == "W5C" else 0.75
     
-        if alias == "W5C":
-            f = 0.182
-        else:
-            f = 0.75 * pump_runtime_today
-        
-        f2 = 3600000
-        
-        return f / f2    
-
-    # device.alias, device.type_code, 
+        watt_seconds = power_coefficient * pump_runtime_today
+        watt_hours = watt_seconds / 3600.0
+        kilowatt_hours = watt_hours / 1000.0
+    
+        return kilowatt_hours
+    
     @staticmethod
     def calculate_water_purified(alias, pump_runtime_today):
-        f = 0
-        f2 = 2.0
-        f3 = 1.5
+        """
+        Water purified in liters.
+        Equivalent to Java: i == 1 branch.
+        """
+        # Default values (Java fallback)
+        flow_rate_l_per_min = 1.5   # f3
+        divisor = 2.0               # f2
     
+        # Model-specific overrides
         if alias == "W5C":
-            f2 = 1.0
-            f3 = 1.3
+            flow_rate_l_per_min = 1.3
+            divisor = 1.0
         elif alias == "W4X":
-            f2 = 1.8
+            divisor = 1.8
         elif alias == "CTW3":
-            f2 = 3.0
-          
-        f = (f3 * pump_runtime_today) / 60.0
-        
-        return f / f2
+            divisor = 3.0
     
+        # Convert pump runtime (seconds) → liters
+        liters = (flow_rate_l_per_min * pump_runtime_today) / 60.0
+    
+        # Apply model divisor
+        return liters / divisor
+
     # canculateWxFilterLeftDays
     # if device.mode = 1 (normal)
     # device.filter_percentage, 1, 0
@@ -296,14 +301,26 @@ class Utils:
     
     @staticmethod
     def get_device_properties(device_integer_identifier):
+        # TypeCode     Alias
+        # 1            W5
+        # 2            W5C
+        # 3            W5N
+        # 4            W4X
+        # 5            CTW2
+        # 6            W4X
+    
         device_mapping = {
             205: {"name": "Petkit_W5C", "alias": "W5C", "product_name": "Eversweet Mini", "device_type": 14, "type_code": 2},
             206: {"name": "Petkit_W5", "alias": "W5", "product_name": "Eversweet Mini", "device_type": 14, "type_code": 1},
             213: {"name": "Petkit_W5N", "alias": "W5N", "product_name": "Eversweet Mini", "device_type": 14, "type_code": 3},
             214: {"name": "Petkit_W4X", "alias": "W4X", "product_name": "Eversweet 3 Pro", "device_type": 14, "type_code": 4},
             217: {"name": "Petkit_CTW2", "alias": "CTW2", "product_name": "Eversweet Solo 2", "device_type": 14, "type_code": 5},
-            223: {"name": "Petkit_CTW3", "alias": "CTW3", "product_name": "Eversweet Max", "device_type": 24, "type_code": 0},
-            228: {"name": "Petkit_W4XUVC", "alias": "W4X", "product_name": "Eversweet 3 Pro (UVC)", "device_type": 14, "type_code": 6}
+            223: {"name": "Petkit_CTW3", "alias": "W5", "product_name": "Eversweet Max", "device_type": 24, "type_code": 1},
+            228: {"name": "Petkit_W4XUVC", "alias": "W4X", "product_name": "Eversweet 3 Pro (UVC)", "device_type": 14, "type_code": 6},
+            246: {"name": "Petkit_CTW3_2", "alias": "W5", "product_name": "Eversweet Max", "device_type": 24, "type_code": 1},
+            247: {"name": "Petkit_CTW3_100", "alias": "W5C", "product_name": "Eversweet Max 2", "device_type": 24, "type_code": 2},
+            248: {"name": "Petkit_CTW3UV", "alias": "W5N", "product_name": "Eversweet Max", "device_type": 24, "type_code": 3},
+            249: {"name": "Petkit_CTW3UV_100", "alias": "W4X", "product_name": "Eversweet Max 2", "device_type": 24, "type_code": 4}
         }
 
         return device_mapping[device_integer_identifier]
