@@ -262,6 +262,8 @@ class Utils:
             f3 = 1.3
         elif alias == "W4X":
             f2 = 1.8
+        elif alias == "CTW3":
+            f2 = 3.0
           
         f = (f3 * pump_runtime_today) / 60.0
         
@@ -300,6 +302,7 @@ class Utils:
             213: {"name": "Petkit_W5N", "alias": "W5N", "product_name": "Eversweet Mini", "device_type": 14, "type_code": 3},
             214: {"name": "Petkit_W4X", "alias": "W4X", "product_name": "Eversweet 3 Pro", "device_type": 14, "type_code": 4},
             217: {"name": "Petkit_CTW2", "alias": "CTW2", "product_name": "Eversweet Solo 2", "device_type": 14, "type_code": 5},
+            223: {"name": "Petkit_CTW3", "alias": "CTW3", "product_name": "Eversweet Max", "device_type": 24, "type_code": 0},
             228: {"name": "Petkit_W4XUVC", "alias": "W4X", "product_name": "Eversweet 3 Pro (UVC)", "device_type": 14, "type_code": 6}
         }
 

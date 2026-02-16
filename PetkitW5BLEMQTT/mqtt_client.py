@@ -25,9 +25,18 @@ class MQTTClient:
         self.client.on_subscribe = self.on_subscribe
         self.client.on_publish = self.on_publish
         self.connected = False
+        self.identifier = None 
 
+    def set_identifier(self, identifier):
+        self.identifier = identifier
+        
     def on_connect(self, client, userdata, flags, rc):
-        self.logger.info(f"Connected to MQTT broker")
+        self.logger.info("Connected to MQTT broker")
+        self.connected = True
+        
+        # If device is already known, republish availability on every reconnect
+        if self.identifier:
+            self.publish_availability(self.identifier, "online")
         
     def on_disconnect(self, client, userdata, rc):
         self.logger.info(f"Disconnected from MQTT broker")

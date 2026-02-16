@@ -18,7 +18,7 @@ class Commands:
     
     def init_device_data(self):
         connectiondata = self.ble_manager.connectiondata[self.device.mac].details
-        self.device.status = {"rssi": connectiondata['props']['RSSI']}
+        self.device.status = {"rssi": connectiondata['props'].get('RSSI', 0)}
         
         discovered_bytes = Utils.bytes_to_unsigned_integers(Utils.combine_byte_arrays(connectiondata['props']['ServiceData']))
         device_integer_identifier = discovered_bytes[5]
@@ -32,6 +32,7 @@ class Commands:
         self.device.product_name = device_properties['product_name']
         self.device.device_type = device_properties['device_type']
         self.device.type_code = device_properties['type_code']
+        self.device.alias = device_properties['alias']
     
     async def init_device_connection(self):
         # Basically this function secures the sequence
@@ -56,12 +57,12 @@ class Commands:
             await self.init_device()
             await asyncio.sleep(3.0)
             
-            await self.ble_manager.disconnect_device(self.mac)
+            await self.ble_manager.disconnect_device(self.device.mac)
             await asyncio.sleep(1.0)
-            await self.ble_manager.connect_device(self.mac)
+            await self.ble_manager.connect_device(self.device.mac)
             await asyncio.sleep(1.0)
             await self.init_device_connection()
-
+        
         await self.get_device_info()
         await asyncio.sleep(0.75)
         await self.get_device_type()
@@ -91,6 +92,7 @@ class Commands:
         type = 1                            # Sending 1
         seq = self.sequence                 # Example sequence number       
 
+        self.logger.info(f"Initializing device.")
         # In case you initialize the device using this class
         # the device_id will be erased after CMD 73
         # there seems to be somekind of validation of device_id vs secret
@@ -136,6 +138,9 @@ class Commands:
         cmd = 86                            # Command for getting device details
         type = 1                            # Type is 1 for sending - 2 for receiving
         seq = self.sequence                 # Example sequence number
+    
+        self.logger.info(f"Awaiting device synchronization.")
+        
         #data = [0, 0, 253, 54, 124, 210, 241, 44]   # What's going on here?
         data = [0, 0] + self.secret         # What's going on here?
         
@@ -203,7 +208,8 @@ class Commands:
         self.logger.info(f"Queued command: {cmd}")
         return
 
-    async def get_device_details(self):
+    async def get_device_details(self):    
+        self.logger.info(f"Getting device details.")
     
         if self.device.device_id:
             return

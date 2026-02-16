@@ -5,32 +5,18 @@ import sys
 import time
 import logging
 import os
+from PetkitW5BLEMQTT import Constants, BLEManager
 from bleak import BleakScanner
-
-PETKIT_PREFIXES = ("W4", "W5", "CTW2")
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - Supervisor - %(levelname)s - %(message)s"
+    format="%(asctime)s - PetkitW5BLEMQTT-Supervisor - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger("PetkitSupervisor")
 
 # Resolve absolute path to main.py
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MAIN_PATH = os.path.join(BASE_DIR, "main.py")
-
-
-async def scan_petkit_devices():
-    logger.info("Scanning for Petkit BLE devices...")
-    devices = await BleakScanner.discover()
-
-    found = {}
-    for dev in devices:
-        if dev.name and any(prefix in dev.name for prefix in PETKIT_PREFIXES):
-            logger.info(f"Found Petkit device: {dev.name} ({dev.address})")
-            found[dev.address] = dev.name
-
-    return found
 
 
 def start_worker(address, mqtt_args):
@@ -60,9 +46,12 @@ def start_worker(address, mqtt_args):
 async def supervisor(mqtt_args):
     workers = {}
 
+    ble_manager = BLEManager(event_handler=None, commands=None, logger=logger)
+
     while True:
         try:
-            found = await scan_petkit_devices()
+        
+            found = await ble_manager.scan()
 
             # Start workers for new devices
             for address in found:

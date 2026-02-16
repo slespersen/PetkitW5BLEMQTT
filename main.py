@@ -5,12 +5,12 @@ from PetkitW5BLEMQTT import BLEManager, Constants, Device, EventHandlers, Comman
 
 class Manager:
     def __init__(self, address, mqtt_enabled=False, mqtt_settings=None, logging_level=logging.INFO):
-        self.setup_logging(logging_level)
-        self.logger = logging.getLogger("PetkitW5BLEMQTT")
-        debug = logging_level == logging.DEBUG  # Determine if debug logging is enabled
-
         self.address = address
         self.device = Device(self.address)
+        
+        self.setup_logging(logging_level)
+        self.logger = logging.getLogger(f"PetkitW5BLEMQTT-{self.device.mac_readable}")
+        debug = logging_level == logging.DEBUG  # Determine if debug logging is enabled
 
         # Correct order of instantiation
         self.commands = Commands(ble_manager=None, device=self.device, logger=self.logger)
@@ -51,15 +51,15 @@ class Manager:
                 # Connect to the device
                 await self.commands.init_device_connection()
                 
-                while self.device.serial == "Uninitialized":
-                    self.logger.info(f"Device not initialized yet, waiting...")
-                    await asyncio.sleep(1)
-                
+                # Initialize the heartbeat
                 heartbeat = asyncio.create_task(self.ble_manager.heartbeat(60))
-
-                if self.mqtt_client and not self.mqtt_client.connected:
+                
+                if self.mqtt_client and self.mqtt_client.connected:                    
                     # Setup the MQTT payloads
                     self.mqtt_payloads = MQTTPayloads(device=self.device)
+                    
+                    # Tell MQTTClient which identifier to use for availability 
+                    self.mqtt_client.set_identifier(self.device.mac_readable)
                     
                     self.logger.info(f"Sending payloads...")
                     
