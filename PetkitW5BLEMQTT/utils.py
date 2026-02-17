@@ -301,26 +301,18 @@ class Utils:
     
     @staticmethod
     def get_device_properties(device_integer_identifier):
-        # TypeCode     Alias
-        # 1            W5
-        # 2            W5C
-        # 3            W5N
-        # 4            W4X
-        # 5            CTW2
-        # 6            W4X
-    
         device_mapping = {
             205: {"name": "Petkit_W5C", "alias": "W5C", "product_name": "Eversweet Mini", "device_type": 14, "type_code": 2},
             206: {"name": "Petkit_W5", "alias": "W5", "product_name": "Eversweet Mini", "device_type": 14, "type_code": 1},
             213: {"name": "Petkit_W5N", "alias": "W5N", "product_name": "Eversweet Mini", "device_type": 14, "type_code": 3},
             214: {"name": "Petkit_W4X", "alias": "W4X", "product_name": "Eversweet 3 Pro", "device_type": 14, "type_code": 4},
             217: {"name": "Petkit_CTW2", "alias": "CTW2", "product_name": "Eversweet Solo 2", "device_type": 14, "type_code": 5},
-            223: {"name": "Petkit_CTW3", "alias": "W5", "product_name": "Eversweet Max", "device_type": 24, "type_code": 1},
+            223: {"name": "Petkit_CTW3", "alias": "CTW3", "product_name": "Eversweet Max", "device_type": 24, "type_code": 1},
             228: {"name": "Petkit_W4XUVC", "alias": "W4X", "product_name": "Eversweet 3 Pro (UVC)", "device_type": 14, "type_code": 6},
-            246: {"name": "Petkit_CTW3_2", "alias": "W5", "product_name": "Eversweet Max", "device_type": 24, "type_code": 1},
-            247: {"name": "Petkit_CTW3_100", "alias": "W5C", "product_name": "Eversweet Max 2", "device_type": 24, "type_code": 2},
-            248: {"name": "Petkit_CTW3UV", "alias": "W5N", "product_name": "Eversweet Max", "device_type": 24, "type_code": 3},
-            249: {"name": "Petkit_CTW3UV_100", "alias": "W4X", "product_name": "Eversweet Max 2", "device_type": 24, "type_code": 4}
+            246: {"name": "Petkit_CTW3_2", "alias": "CTW3", "product_name": "Eversweet Max", "device_type": 24, "type_code": 1},
+            247: {"name": "Petkit_CTW3_100", "alias": "CTW3", "product_name": "Eversweet Max 2", "device_type": 24, "type_code": 2},
+            248: {"name": "Petkit_CTW3UV", "alias": "CTW3", "product_name": "Eversweet Max", "device_type": 24, "type_code": 3},
+            249: {"name": "Petkit_CTW3UV_100", "alias": "CTW3", "product_name": "Eversweet Max 2", "device_type": 24, "type_code": 4}
         }
 
         return device_mapping[device_integer_identifier]
