@@ -281,6 +281,9 @@ class Utils:
     # device.filter_percentage, device.smart_time_on, device.smart_time_off
     @staticmethod
     def calculate_remaining_filter_time(filter_percentage, time_on, time_off):
+        if time_on == 0:
+            # Fallback when smart mode times are unavailable (e.g. CTW3 short packet)
+            return math.ceil(filter_percentage * 60)
         return math.ceil(((filter_percentage * 30.0) * (time_on + time_off)) / time_on)
     
     @staticmethod

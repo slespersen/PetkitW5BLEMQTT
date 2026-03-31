@@ -149,6 +149,57 @@ class Parsers:
     # Status
     @staticmethod
     def device_status(data, alias):
+        if alias == "CTW3":
+            # CTW3 has 10 extra state bytes compared to generic devices.
+            # State section is 26 bytes (data[0:26]), config section starts at data[26].
+            mode = data[2]
+            filter_percentage = data[13] / 100.0
+            pump_runtime = Utils.bytes_to_integer(data[9:13])
+            pump_runtime_today = Utils.bytes_to_integer(data[15:19])
+
+            # Config fields follow state section at offset 26 (present in CMD 230 full status)
+            smart_time_on = data[26] if len(data) > 26 else 0
+            smart_time_off = data[27] if len(data) > 27 else 0
+            led_switch = data[28] if len(data) > 28 else None
+            led_brightness = data[29] if len(data) > 29 else None
+            dnd_switch = data[34] if len(data) > 34 else None
+
+            filter_time_left, purified_water, purified_water_today, energy_consumed = Utils.calculate_values(
+                mode, filter_percentage, smart_time_on, smart_time_off, alias, pump_runtime_today, pump_runtime
+            )
+
+            return {
+                "power_status": data[0],
+                "suspend_status": data[1],
+                "mode": mode,
+                "electric_status": data[3],
+                "dnd_state": data[4],
+                "warning_breakdown": data[5],
+                "warning_water_missing": data[6],
+                "low_battery": data[7],
+                "warning_filter": data[8],
+                "pump_runtime": pump_runtime,
+                "filter_percentage": filter_percentage,
+                "running_status": data[14],
+                "pump_runtime_today": pump_runtime_today,
+                "pet_drinking": data[19],
+                "supply_voltage": Utils.bytes_to_short(data[20:22]),
+                "battery_voltage": Utils.bytes_to_short(data[22:24]),
+                "battery_percentage": data[24],
+                "module_status": data[25],
+                "smart_time_on": smart_time_on,
+                "smart_time_off": smart_time_off,
+                "led_switch": led_switch,
+                "led_brightness": led_brightness,
+                "do_not_disturb_switch": dnd_switch,
+                "pump_runtime_readable": Utils.get_timestamp_days(pump_runtime),
+                "pump_runtime_today_readable": Utils.get_timestamp_hours(pump_runtime_today),
+                "filter_time_left": filter_time_left,
+                "purified_water": purified_water,
+                "purified_water_today": purified_water_today,
+                "energy_consumed": energy_consumed,
+            }
+
         mode = data[1]
         filter_percentage = Utils.byte_to_integer(data[10]) / 100
         smart_time_on = data[16]
