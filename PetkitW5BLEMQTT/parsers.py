@@ -182,7 +182,7 @@ class Parsers:
                 "filter_percentage": filter_percentage,
                 "running_status": data[14],
                 "pump_runtime_today": pump_runtime_today,
-                "pet_drinking": data[19],
+                "detect_status": data[19],
                 "supply_voltage": Utils.bytes_to_short(data[20:22]),
                 "battery_voltage": Utils.bytes_to_short(data[22:24]),
                 "battery_percentage": data[24],
