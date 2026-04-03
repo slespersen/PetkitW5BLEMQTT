@@ -4,16 +4,14 @@ class Constants:
 
     CTW2_NAME = "Petkit_CTW2"
     CTW3_NAME = "Petkit_CTW3"
+    CTW3_2_NAME = "Petkit_CTW3_2"
+    CTW3_100_NAME = "Petkit_CTW3_100"
+    CTW3_UV_NAME = "Petkit_CTW3UV"
+    CTW3_UV_100_NAME = "Petkit_CTW3UV_100"
     W5C_NAME = "Petkit_W5C"
     W5N_NAME = "Petkit_W5N"
     W5_NAME = "Petkit_W5"
     W4X_NAME = "Petkit_W4X"
     W4X_UVC_NAME = "Petkit_W4XUVC"
-    CTW3_100_NAME = "Petkit_CTW3_100";
-    CTW3_2_NAME = "Petkit_CTW3_2";
-    CTW3_NAME = "Petkit_CTW3";
-    CTW3_UV_100_NAME = "Petkit_CTW3UV_100";
-    CTW3_UV_NAME = "Petkit_CTW3UV";
-
 
     SUPPORTED_DEVICES = ["W4", "W5", "CTW2", "CTW3"]
